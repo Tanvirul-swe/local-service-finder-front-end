@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Eye, EyeOff, UserPlus, ArrowLeft, User, Briefcase } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -18,18 +20,27 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
-    userType: "consumer" // "consumer" or "provider"
+    userType: "consumer" as "consumer" | "provider" // Type assertion for proper typing
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { signup, isLoading } = useAuth();
+
+  // Redirect authenticated users based on their type
+  useAuthRedirect({
+    userTypeRedirect: {
+      consumer: "/",
+      provider: "/dashboard"
+    }
+  });
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (formData.password !== formData.confirmPassword) {
@@ -49,17 +60,28 @@ const Signup = () => {
       });
       return;
     }
-
-    setIsLoading(true);
     
-    // Mock signup logic - replace with actual authentication
-    setTimeout(() => {
-      setIsLoading(false);
+    const result = await signup({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      userType: formData.userType
+    });
+    
+    if (result.success) {
       toast({
         title: "Account Created!",
-        description: "Welcome to ServiceHub! Please check your email to verify your account.",
+        description: result.message,
       });
-    }, 1000);
+      // Navigation is handled by useAuthRedirect hook or backend response
+    } else {
+      toast({
+        title: "Signup Failed",
+        description: result.message,
+        variant: "destructive"
+      });
+    }
   };
 
   return (

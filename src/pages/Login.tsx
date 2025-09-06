@@ -8,49 +8,43 @@ import { Separator } from "@/components/ui/separator";
 import { Eye, EyeOff, LogIn, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { login, isLoading } = useAuth();
 
-  // Demo credentials for different user types
-  const demoCredentials = {
-    user: { email: "user@gmail.com", password: "12345678", redirect: "/" },
-    provider: { email: "provider@gmail.com", password: "12345678", redirect: "/dashboard" }
-  };
+  // Redirect authenticated users based on their type
+  useAuthRedirect({
+    userTypeRedirect: {
+      consumer: "/",
+      provider: "/dashboard"
+    }
+  });
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // Check if credentials match demo accounts
-      if (email === demoCredentials.user.email && password === demoCredentials.user.password) {
-        toast({
-          title: "Login Successful!",
-          description: "Welcome back to ServiceHub",
-        });
-        navigate(demoCredentials.user.redirect);
-      } else if (email === demoCredentials.provider.email && password === demoCredentials.provider.password) {
-        toast({
-          title: "Provider Login Successful!",
-          description: "Welcome to your provider dashboard",
-        });
-        navigate(demoCredentials.provider.redirect);
-      } else {
-        toast({
-          title: "Login Failed",
-          description: "Invalid email or password. Please try the demo credentials.",
-          variant: "destructive",
-        });
-      }
-    }, 1000);
+    const result = await login(email, password);
+    
+    if (result.success) {
+      toast({
+        title: "Login Successful!",
+        description: result.message,
+      });
+      // Navigation is handled by useAuthRedirect hook
+    } else {
+      toast({
+        title: "Login Failed",
+        description: result.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -169,10 +163,11 @@ const Login = () => {
               </p>
               
               <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground font-medium mb-2">Demo Credentials:</p>
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <div>User: user@gmail.com / 12345678</div>
-                  <div>Provider: provider@gmail.com / 12345678</div>
+                <p className="text-xs text-muted-foreground font-medium mb-2">
+                  Note: Connect your MySQL/Node.js backend
+                </p>
+                <div className="text-xs text-muted-foreground">
+                  Update API_BASE_URL in src/services/api.ts to point to your backend server
                 </div>
               </div>
             </div>
