@@ -10,5 +10,5 @@ export default defineConfig({
   build: {
     outDir: "dist",  // must match vercel.json
   },
-  base: "/", // ensures assets load correctly
+  base: "./", // ensures assets load correctly
 });
