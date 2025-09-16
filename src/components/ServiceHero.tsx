@@ -14,7 +14,7 @@ const ServiceHero = () => {
           alt="Local service providers helping community" 
           className="w-full h-full object-cover opacity-20"
         />
-        <div className="absolute inset-0 bg-gradient-hero opacity-90"></div>
+        <div className="absolute inset-0 bg-gradient-hero opacity-80"></div>
       </div>
       
       {/* Content */}
