@@ -3,14 +3,19 @@
 export interface User {
   id: number;
   firstName: string;
-  lastName: string;
+  lastName?: string | null;
   email: string;
-  userType: 'consumer' | 'provider';
-  isEmailVerified: boolean;
+  phone?: string | null;
+  address?: string | null;
+  role: 'CUSTOMER' | 'PROVIDER' | 'ADMIN'; // maps to backend role
+  about?: string | null;
+  signUpType: 'EMAIL' | 'GOOGLE' | 'FACEBOOK';
+  status: 'APPROVE' | 'PENDING' | 'BLOCKED';
+  activeStatus: boolean;
+  isEmailVerified: boolean; // you can map this from status or a separate field
   createdAt: string;
   updatedAt: string;
 }
-
 export interface LoginRequest {
   email: string;
   password: string;

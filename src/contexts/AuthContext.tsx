@@ -4,14 +4,14 @@ import { AuthState, User } from '@/types/auth';
 import { AuthService } from '@/services/authService';
 
 interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message: string, user: User | null }>;
   signup: (userData: {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
     userType: 'consumer' | 'provider';
-  }) => Promise<{ success: boolean; message: string }>;
+  }) => Promise<{ success: boolean; message: string, user: User | null }>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -106,16 +106,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             token: response.data.token 
           } 
         });
-        return { success: true, message: response.message };
+        return { success: true, message: response.message, user: response.data.user };
       } else {
         dispatch({ type: 'SET_LOADING', payload: false });
-        return { success: false, message: response.message };
+        return { success: false, message: response.message, user: null };
       }
     } catch (error) {
       dispatch({ type: 'SET_LOADING', payload: false });
       return { 
         success: false, 
-        message: error instanceof Error ? error.message : 'Login failed' 
+        message: error instanceof Error ? error.message : 'Login failed',
+        user: null
       };
     }
   };
@@ -142,20 +143,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               token: response.data.token 
             } 
           });
+          return { success: true, message: response.message, user: response.data.user };
         } else {
           // Email verification required
           dispatch({ type: 'SET_LOADING', payload: false });
+          return { success: true, message: response.message, user: null };
         }
-        return { success: true, message: response.message };
       } else {
         dispatch({ type: 'SET_LOADING', payload: false });
-        return { success: false, message: response.message };
+        return { success: false, message: response.message, user: null };
       }
     } catch (error) {
       dispatch({ type: 'SET_LOADING', payload: false });
       return { 
         success: false, 
-        message: error instanceof Error ? error.message : 'Signup failed' 
+        message: error instanceof Error ? error.message : 'Signup failed',
+        user: null
       };
     }
   };

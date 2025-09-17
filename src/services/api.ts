@@ -1,8 +1,8 @@
 // API configuration and base service for external backend
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-production-api.com/api' 
-  : 'http://localhost:3000/api';
+  ? 'http://localhost:3000/api/v1' 
+  : 'http://localhost:3000/api/v1';
 
 export class ApiService {
   private static baseURL = API_BASE_URL;

@@ -35,27 +35,32 @@ const Login = () => {
     if (result.success) {
       toast({
         title: "Login Successful!",
-        description: result.message,
+        description: result.user ? `Welcome back, ${result.user.firstName}!` : result.message,
       });
-      // Navigation is handled by useAuthRedirect hook
-      navigate("/");
-    } else {
-      toast({
-        title: "Login Successful!",
-        description: result.message,
-      });
-      if (email === "user@gmail.com") {
-        navigate("/");
-      } else if (email === "provider@gmail.com") {
+      // Check user roole and navigate accordingly
+      if (result.user?.role === "PROVIDER") {
         navigate("/dashboard");
+      } else {
+        navigate("/");
       }
 
-
+    } else {
       // toast({
-      //   title: "Login Failed",
+      //   title: "Login Successful!",
       //   description: result.message,
-      //   variant: "destructive",
       // });
+      // if (email === "user@gmail.com") {
+      //   navigate("/");
+      // } else if (email === "provider@gmail.com") {
+      //   navigate("/dashboard");
+      // }
+
+
+      toast({
+        title: "Login Failed",
+        description: result.message,
+        variant: "destructive",
+      });
     }
   };
 
