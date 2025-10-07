@@ -1,65 +1,55 @@
-import { 
-  Wrench, 
-  Home, 
-  GraduationCap, 
-  Truck, 
-  Camera, 
-  Car,
-  Heart,
-  Scissors,
-  Stethoscope,
-  Shield,
-  Package,
-  Briefcase
-} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
-const categories = [
-  {
-    icon: Wrench,
-    title: "Home Services",
-    description: "Electrician, Plumber, Carpenter, Cleaner",
-    count: "1,200+ providers",
-    color: "text-blue-600"
-  },
-  {
-    icon: GraduationCap,
-    title: "Personal Services",
-    description: "Tutors, Trainers, Beauty & Grooming",
-    count: "800+ providers",
-    color: "text-green-600"
-  },
-  {
-    icon: Truck,
-    title: "Delivery & Logistics",
-    description: "Medicine, Gas, Grocery, Courier",
-    count: "500+ providers",
-    color: "text-orange-600"
-  },
-  {
-    icon: Briefcase,
-    title: "Professional Services",
-    description: "Real Estate, Photography, IT Support",
-    count: "600+ providers",
-    color: "text-purple-600"
-  },
-  {
-    icon: Car,
-    title: "Automobile",
-    description: "Car Wash, Mechanic, Bike Repair",
-    count: "300+ providers",
-    color: "text-red-600"
-  },
-  {
-    icon: Stethoscope,
-    title: "Healthcare",
-    description: "Elderly Care, Nursing, Medical",
-    count: "400+ providers",
-    color: "text-teal-600"
-  }
-];
+import {
+  Wrench,
+  GraduationCap,
+  Truck,
+  Briefcase,
+  Car,
+  Stethoscope,
+  Loader
+} from "lucide-react";
+import { Category } from "@/services/category";
+import { ProviderService } from "@/services/providerService";
+
+// Optional: local fallback icons (to match existing look)
+const defaultIcons: Record<string, any> = {
+  "Home Services": Wrench,
+  "Personal Care": GraduationCap,
+  "Delivery & Logistics": Truck,
+  "Professional Services": Briefcase,
+  "Automobile": Car,
+  "Healthcare": Stethoscope,
+};
 
 const ServiceCategories = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await ProviderService.getAllCategories();
+        if (response.success && response.data) {
+          setCategories(response.data);
+        } else {
+          console.error(response.message);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <section id="services" className="py-16 bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -73,28 +63,39 @@ const ServiceCategories = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => {
-            const IconComponent = category.icon;
+          {categories.map((category) => {
+            const IconComponent = defaultIcons[category.name] || Wrench; // fallback icon
+            const subNames = category.subCategories?.map((sub) => sub.name).join(", ");
+
             return (
-              <Card 
-                key={index} 
+              <Card
+                key={category.id}
                 className="bg-gradient-card hover:shadow-service-card transition-smooth cursor-pointer border-border/50 group"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start space-x-4">
-                    <div className={`p-3 rounded-xl bg-muted group-hover:scale-110 transition-bounce`}>
-                      <IconComponent className={`h-6 w-6 ${category.color}`} />
+                    <div className="p-3 rounded-xl bg-muted group-hover:scale-110 transition-bounce">
+                      {category.icon ? (
+                        <img
+                          src={category.icon}
+                          alt={category.name}
+                          className="h-6 w-6 invert-[50%] sepia-[100%] saturate-[500%] hue-rotate-[180deg]"
+
+                        />
+                      ) : (
+                        <IconComponent className="h-6 w-6 text-primary" />
+                      )}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-smooth">
-                        {category.title}
+                        {category.name}
                       </h3>
-                      <p className="text-muted-foreground text-sm mb-2">
-                        {category.description}
+                      <p className="text-muted-foreground text-sm mb-2 truncate">
+                        {subNames || "Various services available"}
                       </p>
                       <p className="text-primary font-medium text-sm">
-                        {category.count}
+                        600+ providers
                       </p>
                     </div>
                   </div>

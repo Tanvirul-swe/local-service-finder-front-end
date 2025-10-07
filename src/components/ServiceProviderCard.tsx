@@ -39,7 +39,7 @@ const ServiceProviderCard = ({
   specialties,
   minimumCost
 }: ServiceProviderCardProps) => {
-  
+
   const handleBookNow = () => {
     const providerData = {
       id,
@@ -58,7 +58,7 @@ const ServiceProviderCard = ({
       specialties,
       minimumCost
     };
-    
+
     // Pass provider data via URL state
     window.location.href = `/book-service?provider=${encodeURIComponent(JSON.stringify(providerData))}`;
   };
@@ -84,7 +84,7 @@ const ServiceProviderCard = ({
               {name.split(' ').map(n => n[0]).join('')}
             </AvatarFallback>
           </Avatar>
-          
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-smooth">
@@ -97,16 +97,16 @@ const ServiceProviderCard = ({
                 <ShoppingBag className="h-4 w-4 text-primary" />
               )}
             </div>
-            
+
             <p className="text-muted-foreground mb-2">{title}</p>
-            
+
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1">
                 <Star className="h-4 w-4 fill-warning text-warning" />
                 <span className="font-medium">{rating}</span>
                 <span className="text-muted-foreground">({reviewCount})</span>
               </div>
-              
+
               <div className="flex items-center gap-1 text-muted-foreground">
                 <MapPin className="h-4 w-4" />
                 <span>{distance}</span>
@@ -135,7 +135,7 @@ const ServiceProviderCard = ({
             <span className="text-muted-foreground">Starting from </span>
             <span className="font-semibold text-foreground">{price}</span>
           </div>
-          
+
           <div className="flex items-center gap-1 text-success">
             <Clock className="h-4 w-4" />
             <span className="font-medium">{availability}</span>
@@ -147,15 +147,15 @@ const ServiceProviderCard = ({
           <Button variant="default" className="flex-1" onClick={handleBookNow}>
             Book Now
           </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="flex-1"
-            onClick={() => window.open('/service-provider-profile', '_blank')}
+            onClick={() => window.open(`/service-provider-profile/1`, '_blank')}
           >
             View Profile
           </Button>
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={handleMessageProvider}
             title="Message Provider"

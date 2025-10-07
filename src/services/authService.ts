@@ -6,7 +6,7 @@ export class AuthService {
   // Login user
   static async login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await ApiService.post<LoginResponse>('/auth/login', credentials);
-    
+
     if (response.success && response.data?.token) {
       // Store token in localStorage
       localStorage.setItem('auth_token', response.data.token);
