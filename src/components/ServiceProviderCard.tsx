@@ -150,7 +150,7 @@ const ServiceProviderCard = ({
           <Button
             variant="outline"
             className="flex-1"
-            onClick={() => window.open(`/service-provider-profile/1`, '_blank')}
+            onClick={() => window.open(`/service-provider-profile/${id}`, '_blank')}
           >
             View Profile
           </Button>

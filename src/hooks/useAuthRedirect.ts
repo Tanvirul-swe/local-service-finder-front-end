@@ -1,48 +1,66 @@
 // Custom hook for handling authentication redirects
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UseAuthRedirectOptions {
   redirectTo?: string;
   requireAuth?: boolean;
   userTypeRedirect?: {
-    consumer: string;
-    provider: string;
+    CUSTOMER?: string;
+    PROVIDER?: string;
+    ADMIN?: string;
   };
 }
 
 export const useAuthRedirect = (options: UseAuthRedirectOptions = {}) => {
-  const { 
-    redirectTo = '/', 
+  const {
+    redirectTo = "/login",
     requireAuth = false,
-    userTypeRedirect 
+    userTypeRedirect,
   } = options;
-  
+
   const { isAuthenticated, user, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoading) return;
 
-    // If authentication is required and user is not authenticated
+    // 🔒 Require login for protected routes
     if (requireAuth && !isAuthenticated) {
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
       return;
     }
 
-    // If user is authenticated and we have type-specific redirects
-    if (isAuthenticated && user && userTypeRedirect) {
-      const targetRoute = userTypeRedirect[user.userType];
-      navigate(targetRoute, { replace: true });
-      return;
-    }
+    // 🚀 Auto-redirect logged-in users (e.g., from /login or /signup)
+    if (isAuthenticated && user) {
+      // Role-based redirect
+      if (userTypeRedirect && user.role && userTypeRedirect[user.role]) {
+        const targetRoute = userTypeRedirect[user.role];
+        if (targetRoute && targetRoute !== window.location.pathname) {
+          navigate(targetRoute, { replace: true });
+        }
+        return;
+      }
 
-    // General redirect for authenticated users
-    if (isAuthenticated && redirectTo !== window.location.pathname) {
-      navigate(redirectTo, { replace: true });
+      // General redirect fallback
+      if (
+        redirectTo &&
+        redirectTo !== window.location.pathname &&
+        !userTypeRedirect
+      ) {
+        navigate(redirectTo, { replace: true });
+      }
     }
-  }, [isAuthenticated, user, isLoading, navigate, redirectTo, requireAuth, userTypeRedirect]);
+  }, [
+    isAuthenticated,
+    user,
+    isLoading,
+    navigate,
+    redirectTo,
+    requireAuth,
+    userTypeRedirect,
+  ]);
 
   return { isAuthenticated, user, isLoading };
 };

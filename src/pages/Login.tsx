@@ -22,11 +22,10 @@ const Login = () => {
   // Redirect authenticated users based on their type
   useAuthRedirect({
     userTypeRedirect: {
-      consumer: "/",
-      provider: "/dashboard"
-    }
+      CUSTOMER: "/",
+      PROVIDER: "/dashboard",
+    },
   });
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 

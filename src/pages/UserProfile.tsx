@@ -26,6 +26,7 @@ import {
 import Navigation from "@/components/Navigation";
 import OrderModificationFlow from "@/components/OrderModificationFlow";
 import ChatRoom from "@/components/ChatRoom";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Mock data
 const mockUser = {
@@ -83,6 +84,11 @@ const mockBookings = [
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState(mockUser);
+  //  const { user, isAuthenticated } = useAuth();
+
+  // if (!isAuthenticated || !user) {
+  //   return <p>Loading user info...</p>;
+  // }
 
   const getStatusBadge = (status: string) => {
     switch (status) {
