@@ -30,6 +30,7 @@ export interface Provider {
   certifications?: Certification[];
   requestModifications?: RequestModification[];
   serviceRequestsAsProvider?: ServiceRequest[];
+  serviceRequestsAsCustomer?: ServiceRequest[];
   category?: Category; // singular, matches API
   receivedReviews?: Review[]; // reviews for this provider
   total_rating_count?: number;
@@ -97,6 +98,8 @@ export interface ServiceRequest {
   service_provider_id: number;
   package_id: number;
   user_id: number;
+  package?: Package; // nested package object
+  serviceProvider: Provider; // nested provider object
 }
 
 // Review type
@@ -126,6 +129,12 @@ export interface ProviderResponse {
   success: boolean;
   message: string;
   data?: Provider;
+}
+
+export interface PackagesResponse {
+  success: boolean;
+  message: string;
+  data: Package[];
 }
 
 // Category and Subcategory types

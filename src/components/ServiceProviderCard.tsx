@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ServiceProviderCardProps {
   id?: string;
@@ -39,6 +41,8 @@ const ServiceProviderCard = ({
   specialties,
   minimumCost
 }: ServiceProviderCardProps) => {
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth(); // ✅ Call hook at top level
 
   const handleBookNow = () => {
     const providerData = {
@@ -59,8 +63,18 @@ const ServiceProviderCard = ({
       minimumCost
     };
 
-    // Pass provider data via URL state
-    window.location.href = `/book-service?provider=${encodeURIComponent(JSON.stringify(providerData))}`;
+    // Navigate to /book-service and pass provider data via state
+    // Check user authentication status before navigating
+
+    console.log("Booking attempt by user:", { isAuthenticated, user });
+
+    if (isAuthenticated) {
+      navigate("/book-service", {
+        state: { provider: providerData }
+      });
+    } else {
+      navigate("/login");
+    }
   };
 
   const handleMessageProvider = () => {

@@ -1,7 +1,9 @@
-import { ProviderResponse } from "@/types/provider";
+import { PackagesResponse, ProviderResponse } from "@/types/provider";
 import { ApiService } from "./api";
 import { Category, CategoryResponse } from "./category";
 import { Provider } from "react";
+import { BookingRequest, BookingResponse } from "@/types/booking";
+import { ProviderDashboardResponse } from "./roviderDashboard";
 
 export class ProviderService {
     // ✅ Fetch provider profile (with packages, portfolios, etc.)
@@ -97,6 +99,53 @@ export class ProviderService {
             return { success: false, message: "Failed to fetch categories", data: [] };
         }
     }
+
+
+    // ✅ Fetch all packages in a specific user_id
+    static async getPackagesByUserId(userId: number) {
+        try {
+            const response = await ApiService.get<PackagesResponse>(`/service/packages/${userId}`);
+            return response;
+        } catch (error) {
+            console.error("Failed to fetch packages by user ID:", error);
+            return { success: false, message: "Failed to fetch packages", data: [] };
+        }
+    }
+
+
+    // /booking/create a new service request
+    static async createServiceRequest(data: BookingRequest): Promise<BookingResponse> {
+        try {
+            console.log("Creating service request with data:", data);
+            const response = await ApiService.post<BookingResponse>(`/booking/create`, data);
+            return response;
+        } catch (error) {
+            console.error("Failed to create service request:", error);
+            return { success: false, message: "Could not create service request" };
+        }
+    }
+
     
+//getProviderDashboard
+    static async getProviderDashboard(providerId: number) {
+        try {
+            const response = await ApiService.get<ProviderDashboardResponse>(`/booking/provider/${providerId}`);
+            return response;
+        } catch (error) {
+            console.error("Failed to fetch provider dashboard:", error);
+            return { success: false, message: "Failed to fetch provider dashboard", data: null };
+        }
+    }  
+    
+    // Update Servicre Request Status
+    static async updateServiceRequestStatus(requestId: number, status: string) {
+        try {
+            const response = await ApiService.patch(`/booking/status/${requestId}`, { status: status });
+            return response;
+        } catch (error) {
+            console.error("Failed to update service request status:", error);
+            return { success: false, message: "Could not update service request status" };
+        }
+    }
 
 }

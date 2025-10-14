@@ -114,7 +114,7 @@ useEffect(() => {
           type: 'SET_USER',
           payload: {
             user: response.data.user,
-            token: response.data.token
+            token: response.data.accessToken
           }
         });
         return { success: true, message: response.message, user: response.data.user };

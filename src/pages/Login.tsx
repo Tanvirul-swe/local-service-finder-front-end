@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +62,14 @@ const Login = () => {
       });
     }
   };
+  const { user, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    console.log("Auth State Changed:", { isAuthenticated, user });
+    if (isAuthenticated && user) {
+      navigate(user.role === "PROVIDER" ? "/dashboard" : "/");
+    }
+  }, [isAuthenticated, user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">

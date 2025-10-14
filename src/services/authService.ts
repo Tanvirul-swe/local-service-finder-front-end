@@ -6,10 +6,10 @@ export class AuthService {
   // Login user
   static async login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await ApiService.post<LoginResponse>('/auth/login', credentials);
-
-    if (response.success && response.data?.token) {
+     console.log('Login Token:', response.data?.accessToken);
+    if (response.success && response.data?.accessToken) {
       // Store token in localStorage
-      localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('auth_token', response.data.accessToken);
       if (response.data.refreshToken) {
         localStorage.setItem('refresh_token', response.data.refreshToken);
       }
@@ -54,7 +54,7 @@ export class AuthService {
     if (!token) return null;
 
     try {
-      const response = await ApiService.get<{ success: boolean; data: User }>('/auth/me');
+      const response = await ApiService.get<{ success: boolean; data: User }>('/users/me');
       return response.success ? response.data : null;
     } catch (error) {
       console.error('Failed to get current user:', error);
